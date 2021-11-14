@@ -2,3 +2,4 @@ kernel_build/
 linux/
 sd.img
 toc_build/
+busybox

@@ -1,0 +1,16 @@
+
+https://linux-sunxi.org/Allwinner_Nezha
+https://linux-sunxi.org/Linux_mainlining_effort
+https://linux-sunxi.org/D1
+
+https://fedoraproject.org/wiki/Architectures/RISC-V/Allwinner
+
+https://ovsienko.info/D1/
+
+
+Kernel
+
+https://github.com/smaeul/linux/commits/riscv/d1-wip
+https://github.com/chinchilla222/nezha-d1
+https://github.com/c-sky/csky-linux
+https://github.com/tekkamanninja/linux

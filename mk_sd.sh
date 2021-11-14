@@ -1,7 +1,6 @@
 #!/bin/bash
 
-#  https://fedoraproject.org/wiki/Architectures/RISC-V/Allwinner
-#  https://ovsienko.info/D1/
+
 
 prepare(){
     git submodule init
@@ -10,19 +9,6 @@ prepare(){
     sudo apt install autopoint
 }
 
-
-#dd if=/dev/zero of=sd.img bs=1M count=512
-
-# p1 first sector 65536 16M
-
-# sd.img1          65536   98303   32768   16M 83 Linux
-# sd.img2          98304  303103  204800  100M 83 Linux
-# sd.img3         303104 1048575  745472  364M 83 Linux
-
-init_image() {
-    rm -f sd.img
-    xz -d -k sd.img.xz
-}
 
 init_sd_card(){
     dd if=/dev/zero of=sd.img bs=1M count=512
@@ -38,23 +24,8 @@ init_sd_card(){
     
 }
 
-#sudo losetup /dev/loop0 sd.img
-#sudo partprobe  /dev/loop0
-#
-#sudo mkfs.ext4 /dev/loop0p2
-#sudo mkfs.ext4 /dev/loop0p3
-
 # CONFIG_SYS_BOOTM_LEN
 # Image too large: increase CONFIG_SYS_BOOTM_LEN
-
-
-# ls mmc 0:1
-# load mmc 0:1 0x50000000 kernel.itb
-# load mmc 0:1 0x58000000 /EFI/grubriscv64.efi
-# bootefi 0x58000000
-# setenv bootargs 'earlyprintk=sunxi-uart,0x02500000 console=ttyS0,115200 console=tty0 loglevel=8'
-#bootargs=earlyprintk=sunxi-uart,0x02500000 console=ttyS0,115200 console=tty0 loglevel=8
-# bootm 0x50000000#DevelBoard2
 
 spl(){
     
