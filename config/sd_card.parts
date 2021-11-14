@@ -1,0 +1,9 @@
+label: dos
+label-id: 0xdd8fc893
+device: sd.img
+unit: sectors
+sector-size: 512
+
+sd.img1 : start=       65536, size=       32768, type=ef
+sd.img2 : start=       98304, size=      614400, type=83
+sd.img3 : start=      712704, size=      335872, type=83

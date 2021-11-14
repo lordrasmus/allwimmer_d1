@@ -4,3 +4,9 @@
 [submodule "opensbi"]
 	path = opensbi
 	url = https://github.com/tekkamanninja/opensbi
+[submodule "u-boot"]
+	path = u-boot
+	url = https://github.com/tekkamanninja/u-boot
+[submodule "grub"]
+	path = grub
+	url = git://git.savannah.gnu.org/grub.git

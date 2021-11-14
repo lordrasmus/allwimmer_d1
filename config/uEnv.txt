@@ -1,3 +1,1 @@
-bootargs=earlyprintk=ttyS0,0x02500000 console=ttyS0,115200 console=tty0 loglevel=8 clk_ignore_unused cma=8M initcall_debug=0
-load_mmc=load mmc 0:1 0x50000000 kernel.itb
-bootcmd=run load_mmc
+bootcmd=load mmc 0:1 0x58000000 /EFI/grubriscv64.efi ; bootefi 0x58000000
