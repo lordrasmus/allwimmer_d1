@@ -1,0 +1,7 @@
+
+
+
+::sysinit:/bin/mount -t devtmpfs none /dev
+::sysinit:/bin/mount -t proc none /proc
+
+console::respawn:/bin/sh

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #  https://fedoraproject.org/wiki/Architectures/RISC-V/Allwinner
+#  https://ovsienko.info/D1/
 
 prepare(){
     git submodule init
@@ -197,14 +198,13 @@ kernel_build() {
     cp linux/arch/riscv/boot/Image kernel_build
     cp linux/arch/riscv/boot/dts/allwinner/allwinner-d1-nezha-kit.dtb kernel_build
     cp linux/arch/riscv/boot/dts/allwinner/sun20i-d1-nezha.dtb kernel_build
-    #cp Fedora/boot/aw_nezha_d1_2G.dtb kernel_build
-    #cp Fedora/boot/vmlinux-5.4.61+ kernel_build
-    #cp Fedora/boot/vmlinuz-5.10.6-200.0.riscv64.fc33.riscv64 kernel_build
     
-    cp config/kernel.its kernel_build
+    
     
     make -C linux CROSS_COMPILE=riscv64-linux-gnu- ARCH=riscv INSTALL_PATH=../kernel_build zinstall
     
+    
+    #cp config/kernel.its kernel_build
     #pushd kernel_build
     #mkimage -f kernel.its kernel.itb
     #popd
@@ -225,9 +225,66 @@ kernel_build() {
     sudo umount /mnt/image
     sudo losetup -d $dev
     
-    #linux  (hd0,msdos2)/vmlinuz earlyprintk=sunxi-uart,0x02500000 console=ttyS0,115200 console=tty0 loglevel=8
-    #devicetree (hd0,msdos2)/sun20i-d1-nezha.dtb
+}
+
+busybox() {
+    mkdir -p busybox
+    pushd busybox
     
+    if [ ! -e busybox-1.34.1.tar.bz2 ] ; then
+        wget https://busybox.net/downloads/busybox-1.34.1.tar.bz2
+    fi
+    
+    if [ ! -e busybox-1.34.1 ] ; then    
+        tar -xaf busybox-1.34.1.tar.bz2
+    fi
+    
+    #make -C busybox-1.34.1 CROSS_COMPILE=riscv64-linux-gnu- ARCH=riscv menuconfig
+    make -C busybox-1.34.1 CROSS_COMPILE=riscv64-linux-gnu- ARCH=riscv -j20
+    make -C busybox-1.34.1 CROSS_COMPILE=riscv64-linux-gnu- ARCH=riscv install
+    
+    pushd busybox-1.34.1/_install/
+    rm init
+    ln -s /sbin/init init
+    #ln -s /bin/sh init
+    popd
+    
+    #cp ../init_test busybox-1.34.1/_install/init
+    
+    mkdir -p busybox-1.34.1/_install/dev/
+    mkdir -p busybox-1.34.1/_install/proc/
+    mkdir -p busybox-1.34.1/_install/sys/
+    mkdir -p busybox-1.34.1/_install/etc/
+    mkdir -p busybox-1.34.1/_install/etc/init.d/
+    mkdir -p busybox-1.34.1/_install/lib/
+    cp -a /usr/riscv64-linux-gnu/lib/* busybox-1.34.1/_install/lib/
+    cp ../config/initab busybox-1.34.1/_install/etc/
+    cp ../config/rcS busybox-1.34.1/_install/etc/init.d/
+    chmod 755 busybox-1.34.1/_install/etc/init.d/rcS
+    
+    ls busybox-1.34.1/_install/ -all
+    ls busybox-1.34.1/_install/etc -all
+    ls busybox-1.34.1/_install/etc/init.d/ -all
+    
+    rm -rf busybox-1.34.1/_install//lib/modules 
+     
+    make -C ../linux CROSS_COMPILE=riscv64-linux-gnu- ARCH=riscv INSTALL_MOD_PATH=$(pwd)/busybox-1.34.1/_install/ modules_install -j20
+    
+    ( cd busybox-1.34.1/_install/ ; find . | sort | cpio -o -H newc ) > initrd.img
+    
+    popd
+    
+    
+    sudo losetup $dev sd.img
+    sudo partprobe  $dev
+    sudo mount $dev"p2" /mnt/image
+    
+    sudo cp busybox/initrd.img /mnt/image
+    
+    ls -allh /mnt/image
+    df -h /mnt/image
+    sudo umount /mnt/image
+    sudo losetup -d $dev
 }
 
 prepare
@@ -237,4 +294,4 @@ opensbi
 u_boot
 grub
 kernel_build
-
+busybox
